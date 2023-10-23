@@ -5,10 +5,6 @@ from bs4 import BeautifulSoup
 session = requests.Session()
 
 
-
-
-    
-
 def authorization():
     login_url = 'https://lk.mirea.ru/auth.php'
 
@@ -21,13 +17,22 @@ def authorization():
     }
 
     login_responce = session.post(login_url, data=login_data)
-    soup =  BeautifulSoup(login_responce.text, 'html.parser')
-    group_lable = soup.find_all('tr')
+
+    return login_responce
     
-    print(group_lable)
 
+def find_student_group():
+    
+    login_responce = authorization()
+    soup =  BeautifulSoup(login_responce.text, 'html.parser')
+    group_table = soup.find_all('table')[0]
 
-import time
+    elements_in_gourp_table = group_table.find_all('td')
+    
+    student_gourp = elements_in_gourp_table[4]
+
+    print(f"Your group is {student_gourp.text}")
+
 
 def parse_schedule(url):
     authorization()
@@ -44,7 +49,7 @@ def parse_schedule(url):
         print("ok")
     print(schedule_responce.headers)
 
-authorization()
+find_student_group()
 
 
 
