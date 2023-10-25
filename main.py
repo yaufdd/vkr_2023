@@ -5,14 +5,15 @@ from bs4 import BeautifulSoup
 session = requests.Session()
 
 
-def authorization():
+def authorization(login, password):
+
     login_url = 'https://lk.mirea.ru/auth.php'
 
     login_data = {
         'AUTH_FORM' : 'Y',
         'TYPE' : 'AUTH',
-        'USER_LOGIN' : 'bamba.e@edu.mirea.ru',
-        'USER_PASSWORD' : 'a8JkFUmW',
+        'USER_LOGIN' : login,
+        'USER_PASSWORD' : password,
         'USER_REMEMBER' : 'Y'
     }
 
@@ -21,9 +22,9 @@ def authorization():
     return login_responce
     
 
-def find_student_group():
+def find_student_group(login, password):
     
-    login_responce = authorization()
+    login_responce = authorization(login, password)
     soup =  BeautifulSoup(login_responce.text, 'html.parser')
     group_table = soup.find_all('table')[0]
 
@@ -37,9 +38,6 @@ def find_student_group():
 def parse_schedule(url):
     authorization()
 
-    headers = {
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36"
-    }
     schedule_responce = session.get(url)
 
     file_path = "example.html"
@@ -49,7 +47,6 @@ def parse_schedule(url):
         print("ok")
     print(schedule_responce.headers)
 
-find_student_group()
 
 
 

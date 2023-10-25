@@ -1,48 +1,15 @@
-import telegram
-from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler, CallbackContext
+import telebot
+import main
 
-# Состояния разговора
-LOGIN, PASSWORD, DONE = range(3)
+token = '6728104105:AAGaffrRqVxbOKCT6wetjQDpZWFXmjGtA0s'
 
-# Словарь для хранения данных пользователя
-user_data = {}
+bot = telebot.TeleBot(token)
 
-def start(update: Update, context: CallbackContext):
-    update.message.reply_text("Привет! Для начала введите свой логин:")
-    return LOGIN
+@bot.message_handler(commands=['my_info'])  
+def get_stundent_login(message):
+    bot.send_message(message.chat.id, "Введите ваш логин: ")
+    login = message.text
 
-def login(update: Update, context: CallbackContext):
-    user_data['login'] = update.message.text
-    update.message.reply_text("Теперь введите пароль:")
-    return PASSWORD
 
-def password(update: Update, context: CallbackContext):
-    user_data['password'] = update.message.text
-    update.message.reply_text("Спасибо! Логин и пароль сохранены.")
-    return DONE
+bot.polling(non_stop=True)
 
-def cancel(update: Update, context: CallbackContext):
-    update.message.reply_text("Действие отменено.")
-    return ConversationHandler.END
-
-def main():
-    updater = Updater("YOUR_BOT_TOKEN", use_context=True)
-    dp = updater.dispatcher
-
-    conv_handler = ConversationHandler(
-        entry_points=[CommandHandler('start', start)],
-        states={
-            LOGIN: [MessageHandler(Filters.text & ~Filters.command, login)],
-            PASSWORD: [MessageHandler(Filters.text & ~Filters.command, password)],
-        },
-        fallbacks=[CommandHandler('cancel', cancel)],
-    )
-
-    dp.add_handler(conv_handler)
-
-    updater.start_polling()
-    updater.idle()
-
-if __name__ == '__main__':
-    main()
