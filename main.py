@@ -48,12 +48,16 @@ def get_personal_url(url):
     return personal_url
 
 
+
 def parse_schedule_api():
     authorization()
     schedule_responce = session.get(get_personal_url('https://timetable.mirea.ru/api/groups/name/'))
     schedule_api_data = json.loads(schedule_responce.text)
-    lessons = schedule_api_data["lessons"]
-    return lessons
+    lessons = schedule_api_data['lessons']
+    print(lessons[0])
+    #with open('lesson_data.json', 'w') as file:
+    #    json.dump(lessons, file, indent=4)
+
 
 
 def make_schedule(data):
@@ -61,7 +65,7 @@ def make_schedule(data):
     if data['weekday'] == 1:
         print("True")
 
-print(parse_schedule_api())
+parse_schedule_api()
 
 
 #https://timetable.mirea.ru/ui/schedule?group=%D0%91%D0%A1%D0%91%D0%9E-17-20
