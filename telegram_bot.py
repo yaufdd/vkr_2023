@@ -45,7 +45,7 @@ def show_info(message):
 @bot.message_handler(commands=['schedule'])
 def show_schedule(message):
     currenct_url = main.get_personal_url('https://timetable.mirea.ru/api/groups/name/')
-    student_schedule = main.parse_schedule_api(currenct_url, main.user_data['login'], main.user_data['password'])
+    student_schedule = main.parse_schedule_api()
     
 
 
