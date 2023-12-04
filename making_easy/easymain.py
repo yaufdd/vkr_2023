@@ -14,11 +14,4 @@ class FileInfo:
             json.dump(dictname, file)
         
 
-
-
-            
-test = {
-    "esy" : 123,
-    "asd" : 32
-}
-print(FileInfo.get_dict_from_file('new.json'))
+    

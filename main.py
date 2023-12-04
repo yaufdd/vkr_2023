@@ -63,9 +63,18 @@ class Subject:
             sort_keys=True, indent=4)
 
 
+def make_json_from_api():
+    schedule_responce = session.get(get_personal_url('https://timetable.mirea.ru/api/groups/name/'))
+    currenct_student_schedule  = json.loads(schedule_responce.text)
+    with open('lesson_data.json', 'w')as file:
+        json.dump(currenct_student_schedule, file)
+
+
+
+
 #Парсит API расписания, запоминает в четный и нечетные недели листа объкеты дисциплины
 def parse_schedule_api():
-    schedule_responce = session.get(get_personal_url('https://timetable.mirea.ru/api/groups/name/'))
+    """schedule_responce = session.get(get_personal_url('https://timetable.mirea.ru/api/groups/name/'))
     schedule_api_data = json.loads(schedule_responce.text)
     lessons = schedule_api_data['lessons']
     even_week_subjects = []
@@ -83,7 +92,7 @@ def parse_schedule_api():
                                       dict['lesson_type']['name'])
             even_week_subjects.append(evenweek)
         if dict['weeks'][0] % 2 != 0:
-            oddweek = Subject(dict['discipline']['name'], 
+            oddweek = Subject(dict['discipline']['name'],
                                       dict['room']['campus']['name'], 
                                       dict['calls']['time_start'], 
                                       dict['calls']['time_end'], 
@@ -97,7 +106,15 @@ def parse_schedule_api():
     }
 
     with open ('easy_schedule.json', 'w') as file:
-        json.dump(easy_schedule_api, file)
+        json.dump(easy_schedule_api, file)"""
+    make_json_from_api()
+    with open('lesson_data.json', 'r')as file:
+        current_json = json.load(file)
+
+    for subject in current_json['lessons']:
+        print(subject)
+        
+
     
 
 def convertAllToJSON(input_list: list):
@@ -198,11 +215,11 @@ def detect_week_type():
     except:
         return
 
-def 
 
 
 
-#print(parse_schedule_api())
+
+print(parse_schedule_api())
 
 #https://timetable.mirea.ru/ui/schedule?group=%D0%91%D0%A1%D0%91%D0%9E-17-20
 #https://timetable.mirea.ru/api/groups/name/%D0%91%D0%A1%D0%91%D0%9E-17-20
