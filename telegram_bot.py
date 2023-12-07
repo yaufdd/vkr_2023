@@ -5,8 +5,6 @@ token = '6728104105:AAGaffrRqVxbOKCT6wetjQDpZWFXmjGtA0s'
 
 bot = telebot.TeleBot(token)
 
-
-
 @bot.message_handler(commands=["auth"])
 def auth(message): 
     bot.send_message(message.chat.id, "Введите логин")
@@ -23,7 +21,7 @@ def save_login(message):
 #Запоминает пароль, входит в систему, парсит группу студента и запоминает
 def save_password(message):
     main.user_data['password'] = message.text
-    with open('user_info.json', 'w') as file:
+    with open('user_info.json', 'w') as file:   
         main.json.dump(main.user_data, file)
     student_group = main.find_student_group()
     if student_group != None:
