@@ -7,7 +7,7 @@ token = '6728104105:AAGaffrRqVxbOKCT6wetjQDpZWFXmjGtA0s'
 
 bot = telebot.TeleBot(token)
 
-@bot.message_handler(commands=["auth"])
+@bot.message_handler(commands=["start"])
 def auth(message): 
     bot.send_message(message.chat.id, "Введите логин")
     bot.register_next_step_handler(message, save_login)
@@ -21,18 +21,21 @@ def save_login(message):
 #Запоминает пароль, входит в систему, парсит группу студента и запоминает
 #Так же сразу же сохраняет расписние в базу
 def save_password(message):
-    main.user_data['password'] = message.text
-    student_name = main.find_student_name()['name']
-    group = main.find_student_group()['group']
-    login = main.user_data['login']
-    password = main.user_data['password']
-    main.user_data['tg_id'] = message.from_user.id
-    if group != None:
+    #try: 
+        main.user_data['password'] = message.text
+        student_name = main.find_student_name()['name']
+        group = main.find_student_group()['group']
+        login = main.user_data['login']
+        password = main.user_data['password']
+        main.user_data['tg_id'] = message.from_user.id
+        saved_res = connectdb.save_student_todb(student_name, group, login, password, message.from_user.id)
+        if saved_res != None:
+            bot.send_message(message.chat.id, f"{saved_res}. Запустите команду еще раз")
+            return
         bot.send_message(message.chat.id, f"Ваша информация сохранена. \nВы {student_name} из группы {group}")
-    else:
-        bot.send_message(message.chat.id, "Данные введены неправильно. Запустите команду еще раз")
-    connectdb.save_student_todb(student_name, group, login, password, message.from_user.id)
-    main.save_schedule("https://timetable.mirea.ru/api/groups/name/")
+        main.save_schedule("https://timetable.mirea.ru/api/groups/name/")
+    # except TypeError:
+    #     bot.send_message(message.chat.id, "Данные введены неправильно. Запустите команду еще раз")
     
 
 #Показывает информацию группы
@@ -40,6 +43,20 @@ def save_password(message):
 def show_info(message):
     bot.send_message(message.chat.id, main.user_data['group'])
 
+
+
+# Показывает сегодняшнее расписание
+@bot.message_handler(commands=['today_schedule'])
+def show_todaySchedule(message):
+    isEven, td_weekday = main.week_evenOrNot(datetime.today())
+    today_sche = connectdb.get_todaySchedule(isEven, td_weekday + 1, message.from_user.id)
+    
+    if today_sche:
+        formatted_message = send_formatted_schedule(today_sche)
+        bot.send_message(message.chat.id, formatted_message, parse_mode='HTML')
+    else:
+        bot.send_message(message.chat.id, "На сегодня расписания нет.", parse_mode='HTML')
+    print(today_sche)
 
 def send_formatted_schedule(schedule):
     message = "<b>Расписание на сегодня:</b>\n"
@@ -51,18 +68,6 @@ def send_formatted_schedule(schedule):
             "────────────────────\n" 
         )
     return message
-
-@bot.message_handler(commands=['today_schedule'])
-def show_todaySchedule(message):
-    isEven, td_weekday = main.week_evenOrNot(datetime.today())
-    today_sche = connectdb.get_todaySchedule(isEven, td_weekday + 4, message.from_user.id)
-    
-    if today_sche:
-        formatted_message = send_formatted_schedule(today_sche)
-        bot.send_message(message.chat.id, formatted_message, parse_mode='HTML')
-    else:
-        bot.send_message(message.chat.id, "На сегодня расписания нет.", parse_mode='HTML')
-    print(today_sche)
 
 
 bot.polling(none_stop=True)

@@ -1,6 +1,6 @@
 import psycopg2
 from datetime import datetime
-
+import requests
 def get_todaySchedule(isweekType_even, current_weekday):
     conn = psycopg2.connect(
     dbname='telegrambot_vkr',
@@ -55,4 +55,21 @@ def week_evenOrNot(target_date):
 # print(even, weekday)
 #print(datetime.today().year)
 
-td_sche = get_todaySchedule(True, 1)
+
+session = requests.Session()
+def authorization():
+    
+    login_url = 'https://lk.mirea.ru/auth.php'
+
+    login_data = {
+        'AUTH_FORM' : 'Y',
+        'TYPE' : 'AUTH',
+        'USER_LOGIN' : 'bambassss.e@edu.mirea.ru',
+        'USER_PASSWORD' : 'a8JkFUmW',
+        'USER_REMEMBER' : 'Y'
+    }
+    login_responce = session.post(login_url, data=login_data)
+    
+    return login_responce
+
+print(authorization())

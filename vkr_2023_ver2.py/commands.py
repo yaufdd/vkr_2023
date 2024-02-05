@@ -1,5 +1,7 @@
 import telebot
 from telebot import types
+from aiogram.types.web_app_info import WebAppInfo
+
 
 token = '6728104105:AAGaffrRqVxbOKCT6wetjQDpZWFXmjGtA0s'
 bot = telebot.TeleBot(token)
@@ -11,7 +13,7 @@ def start(message):
     #Cпросить студент или препод
     #При авторизации сохраняется информация о расписании в бд
     markup = types.InlineKeyboardMarkup()
-    button1 = types.InlineKeyboardButton("Авторизация")
+    button1 = types.InlineKeyboardButton("Авторизация", web_app=WebAppInfo('https://www.youtube.com/'))
     button2 = types.InlineKeyboardButton("Перейти на lk.mirea.ru", url='https://lk.mirea.ru/')
     markup.add(button1, button2)
     bot.send_message(message.chat.id, f"Привет, {message.from_user.first_name}! Это Univerbro 👋\n\nАвторизуйся если первый раз\n\nНу или можешь зайти на сайт если нужно", reply_markup=markup)

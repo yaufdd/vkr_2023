@@ -11,13 +11,16 @@ def save_student_todb(name, group_name, login, password, telegram_id):
 
         insert_query = "INSERT INTO Students (name, group_name, login, password, telegram_id) VALUES (%s, %s, %s, %s, %s);"
         data_to_insert = (name, group_name, login, password, telegram_id)
-        cursor.execute(insert_query, data_to_insert)
-
-        conn.commit()
-
-        # закрыть курсор и соединение после использования
-        cursor.close()
-        conn.close()
+        try:
+            cursor.execute(insert_query, data_to_insert)
+            conn.commit()
+        
+            
+            # закрыть курсор и соединение после использования
+            cursor.close()
+            conn.close()
+        except psycopg2.errors.UniqueViolation:
+            return "С этого аккаунта уже регистрировались"
 
         
 
@@ -193,6 +196,7 @@ def find_subjects(week_number, isEven, tg_id):
             Schedules.teacher_name,
             Schedules.classroom,
             Schedules.campus
+            Schedules.calls
         FROM Schedules
         JOIN Students ON Schedules.student_id = Students.id
         WHERE Students.telegram_id = {str(tg_id)}

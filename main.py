@@ -9,7 +9,7 @@ session = requests.Session()
 
 user_data = {}
 
-def registration():
+def login():
 
     login_url = 'https://lk.mirea.ru/auth.php'
 
@@ -23,9 +23,12 @@ def registration():
     login_responce = session.post(login_url, data=login_data)
     
     return login_responce
+
+
     
 
 def authorization():
+    
     login_url = 'https://lk.mirea.ru/auth.php'
 
     login_data = {
@@ -39,11 +42,10 @@ def authorization():
     
     return login_responce
 
-
 #Ищет группу студента и запоминает его в словаь
 def find_student_group():
     try:
-        login_responce = registration()
+        login_responce = login()
         soup =  BeautifulSoup(login_responce.text, 'html.parser')
         group_table = soup.find_all('table')[0]
 
@@ -56,20 +58,17 @@ def find_student_group():
         return 
     
 def find_student_name():
-    try:
-        login_responce = registration()
-        soup =  BeautifulSoup(login_responce.text, 'html.parser')
-        student_find_divs = soup.find_all(class_='student-personal-info')
-        for div in student_find_divs:
-            second_div = div.find_all('div')[0]
+    login_responce = login()
+    soup =  BeautifulSoup(login_responce.text, 'html.parser')
+    student_find_divs = soup.find_all(class_='student-personal-info')
+    for div in student_find_divs:
+        second_div = div.find_all('div')[0]
 
-            span = second_div.find('span')
-            if span :
-                full_name = span.text.strip()
-                user_data['name'] = full_name
-                return user_data
-    except IndexError:
-        return 
+        span = second_div.find('span')
+        if span :
+            full_name = span.text.strip()
+            user_data['name'] = full_name
+            return user_data
 
 #Создает специальную ссылку для студента
 def get_personal_url(url):
