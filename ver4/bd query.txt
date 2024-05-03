@@ -1,0 +1,24 @@
+CREATE TABLE students (
+    tg_id INT PRIMARY KEY,
+    name VARCHAR(255),
+    group_name VARCHAR(50),
+    group_uid INT,
+    login VARCHAR(100),
+    password VARCHAR(200)
+);
+
+CREATE TABLE subjects (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    teacher VARCHAR(255),
+    student_tg_id INT,
+    FOREIGN KEY (student_tg_id) REFERENCES students(tg_id)
+);
+
+CREATE TABLE homeworks (
+    id SERIAL PRIMARY KEY,
+    content TEXT,
+    deadline DATE,
+    subject_id INT,
+    FOREIGN KEY (subject_id) REFERENCES subjects(id)
+);
